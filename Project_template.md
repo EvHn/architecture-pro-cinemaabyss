@@ -59,9 +59,9 @@
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090
 
-![Tests](images/tests.png)
+![Tests](images/task2/tests.png)
 
-![Topics](images/topics.png)
+![Topics](images/task2/topics.png)
 
 ## Задание 3
 
@@ -277,6 +277,11 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+Выполнено не в mimikube, а в https://killercoda.com
+
+![Events service logs](images/task3/events-service-logs.png)
+
+![api/movies response](images/task3/movies.png)
 
 ## Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 

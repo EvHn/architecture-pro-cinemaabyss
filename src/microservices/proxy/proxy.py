@@ -1,7 +1,7 @@
 import os
 import random
-from flask import Flask, request, Response
 import requests
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -11,6 +11,12 @@ MONOLITH_URL = os.environ['MONOLITH_URL']
 MOVIES_SERVICE_URL = os.environ['MOVIES_SERVICE_URL']
 MOVIES_MIGRATION_PERCENT = int(os.environ.get('MOVIES_MIGRATION_PERCENT', 0))
 GRADUAL_MIGRATION = os.environ.get('GRADUAL_MIGRATION', 'false').lower() == 'true'
+
+
+@app.route('/api/proxy/health', methods=['GET'])
+def healthcheck():
+    return {"status": True}
+
 
 @app.route('/<path>', methods=['GET', 'POST'])
 @app.route('/api/<path>', methods=['GET', 'POST'])
@@ -45,6 +51,7 @@ def proxy(path):
         return str(e), 502
 
     return resp.content
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT, debug=True)
