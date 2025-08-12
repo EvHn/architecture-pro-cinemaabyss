@@ -1,0 +1,58 @@
+@startuml
+!include <C4/C4_Container>
+
+AddRelTag("message", $lineStyle = DashedLine())
+
+Person(customer, "Customer", "Владелец умного дома")
+Container(mobile, "Mobile application", "Мобильное приложение")
+Container(web, "Web browser", "Веб приложение")
+Container(tv, "TV application", "ТВ приложение")
+
+Rel(customer, mobile, "Просмотр на мобильном устройстве")
+Rel(customer, web, "Проcмотр в браузере")
+Rel(customer, tv, "Просмотр на телевизоре")
+System_Boundary(c1, "Warm House System") {
+    Container(webGateway, "Web api gateway", "API для веб приложений")
+    Container(mobileGateway, "Mobile api gateway", "API для мобильных приложений")
+    Container(tvGateway, "TV api gateway", "API для ТВ приложений")
+
+    Rel(mobile, mobileGateway, "Просмотр на мобильном устройстве", "JSON/HTTPS")
+    Rel(web, webGateway, "Проcмотр в браузере", "JSON/HTTPS")
+    Rel(tv, tvGateway, "Просмотр на телевизоре", "JSON/HTTPS")
+
+    Container(user, "User service", "Сервис для управления данными пользователей")
+    Container(payment, "Payement service", "Обработка платежей")
+    Container(video, "Video service", "Видео каталог")
+    Container(metadata, "Metadata service", "Метаданные видео")
+
+    Rel(webGateway, user, "Делает вызовы API", "gRPC")
+    Rel(webGateway, payment, "Делает вызовы API", "gRPC")
+    Rel(webGateway, video, "Делает вызовы API", "gRPC")
+    Rel(webGateway, metadata, "Делает вызовы API", "gRPC")
+
+    Rel(mobileGateway, user, "Делает вызовы API", "gRPC")
+    Rel(mobileGateway, payment, "Делает вызовы API", "gRPC")
+    Rel(mobileGateway, video, "Делает вызовы API", "gRPC")
+    Rel(mobileGateway, metadata, "Делает вызовы API", "gRPC")
+
+    Rel(tvGateway, user, "Делает вызовы API", "gRPC")
+    Rel(tvGateway, payment, "Делает вызовы API", "gRPC")
+    Rel(tvGateway, video, "Делает вызовы API", "gRPC")
+    Rel(tvGateway, metadata, "Делает вызовы API", "gRPC")
+
+    ContainerDb(userDB, "User DB", "Хранение данных пользователей")
+    ContainerDb(videoDB, "Video DB", "Хранение данных видео")
+    ContainerDb(metadataDB, "Meta data DB", "Хранение метаданных")
+
+    Rel(user, userDB, "Пишет/читает данные", "SQL/TCP")
+    Rel(video, videoDB, "Пишет/читает данные", "SQL/TCP")
+    Rel(metadata, metadataDB, "Пишет/читает данные", "SQL/TCP")
+    Rel(user, video, "Делает вызовы API", "kafka/TCP", $tags="message")
+}
+System_Ext(recommenderSystem, "External recommender system", "Внешняя рекомендательная система")
+System_Ext(paymentSystem, "External payment system", "Внешний платёжный сервис")
+
+BiRel(recommenderSystem, video, "Обмен сообщениями", "kafka/TCP", $tags="message")
+Rel(payment, paymentSystem, "Делает вызовы API", "JSON/HTTPS")
+
+@enduml
